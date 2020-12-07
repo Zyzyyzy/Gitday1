@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: rgb(255, 255, 255);
+        }
+
+        input {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div><input type="range" min="0" max="255" value="255"><span>255</p>
+    </div>
+    <div><input type="range" min="0" max="255" value="255"><span>255</p>
+    </div>
+    <div><input type="range" min="0" max="255" value="255"><span>255</span></div>
+    <script>
+        var ipts = document.querySelectorAll("input");
+        var divs = document.querySelectorAll("span");
+        var body = document.querySelector('body');
+        ipts[0].onmousedown = function () {
+            this.onmousemove = function () {
+                divs[0].innerHTML = this.value;
+                body.style.background = "rgb(" + this.value + ",0,0)";
+            }
+        }
+        ipts[1].onmousedown = function () {
+            this.onmousemove = function () {
+                divs[1].innerHTML = this.value;
+                body.style.background = "rgb(0," + this.value + ",0)";
+            }
+        }
+        ipts[2].onmousedown = function () {
+            this.onmousemove = function () {
+                divs[2].innerHTML = this.value;
+                body.style.background = "rgb(0,0," + this.value + ")";
+            }
+        }
+    </script>
+</body>
+
+</html>
