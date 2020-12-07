@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas{
+            border:1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="600" height="400"></canvas>
+    <script>
+        var mycanvas = document.querySelector("canvas");
+        var ctx = mycanvas.getContext("2d");
+
+        function Person(){
+            // 绘制工具
+            this.ctx = ctx || document.querySelector("canvas").getContext("2d");
+            // 图片路径
+            this.src = "images/04.png";
+
+            // 画布的宽度
+            this.canvasWidth = this.ctx.canvas.width; 
+            // 画布的高度
+            this.canvasHeight = this.ctx.canvas.height;
+            
+            
+            // 行走步长
+            this.stepSize = 10;
+            // 行走方向 根据图片的行数包含图片对应上,我们用 0表示前  1表示左 2表示右 3表示后方向
+            this.direction = 0;
+
+            // 调用初始化方法
+            this.init();
+        }
+        // 初始化方法
+        Person.prototype.init = function(){
+            var that = this;
+            // 1. 加载图片
+            this.loadImg( function( image ){
+                // 图片的宽度
+                that.imgWidth = image.width;
+                // 图片的高度
+                that.imgHeight = image.height;
+
+                // 计算出每个小人物的尺寸
+                that.personWidth = that.imgWidth / 4;
+                that.personHeight = that.imgHeight / 4;
+
+                // 图片想绘制在画布的正中心位置
+                that.x0 = that.canvasWidth / 2 - that.personWidth / 2;
+                that.y0 = that.canvasHeight / 2 - that.personHeight / 2;
+
+                // 2. 默认图片绘制在中心位置
+                that.ctx.drawImage( image, 0, 0 , that.personWidth,that.personHeight , that.x0, that.y0, that.personWidth, that.personHeight );
+
+                // 3. 能通过方向键控制人物行走
+                that.index = 0;
+                document.onkeydown = function( e ){
+                    if(e.keyCode == 40){
+                        e.preventDefault();
+                        /*前*/
+                        that.index++;
+                        that.direction = 0;
+                        that.y0 += that.stepSize;
+                        that.drawImage( image );
+                    }else if(e.keyCode == 37){
+                        /*左*/
+                        that.index++;
+                        that.direction = 1;
+                        that.x0 -= that.stepSize;
+                        that.drawImage( image );
+                    }else if(e.keyCode == 39){
+                        /*右*/
+                        that.index++;
+                        that.direction = 2;
+                        that.x0 += that.stepSize;
+                        that.drawImage( image );
+                    }else if(e.keyCode == 38){
+                        /*后*/
+                        e.preventDefault();
+                        that.index++;
+                        that.direction = 3;
+                        that.drawImage( image );
+                        that.y0 -= that.stepSize;
+                    }
+                }
+            });
+        }
+
+        // 加载图片
+        Person.prototype.loadImg = function( callback ){
+            var image = new Image();
+            image.onload = function(){
+                callback && callback( image );
+            };
+            image.src = this.src;
+        }
+
+        // 绘制图片
+        Person.prototype.drawImage = function( image ){
+            // 清除画布
+            this.ctx.clearRect(0 , 0 , this.canvasWidth , this.canvasHeight );
+            
+            // 精灵图上的定位x 索引
+            // 精灵图上的定位y 方法
+            // 索引确定使用某一行的第几个图片
+            // 方向确定使用第几行的图片
+
+            // 如果索引边界了, 变成0
+            if( this.index > 3 ){
+                this.index = 0;
+            }
+
+            this.ctx.drawImage( 
+                image,
+                this.index*this.personWidth, this.direction*this.personHeight ,
+                this.personWidth,this.personHeight , 
+                this.x0, this.y0, 
+                this.personWidth, this.personHeight 
+            );
+        }
+
+        new Person();
+    </script>
+</body>
+</html>
